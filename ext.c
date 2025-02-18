@@ -27,7 +27,7 @@ EXPORT int eval(const char *func,
                               int blockSize,
                               double *outReal,
                               double *outImag) {
-  int i, j;
+  int i;
  
   if (strcmp("extsinc", func) == 0) {
     if (nArgs != 1) {
