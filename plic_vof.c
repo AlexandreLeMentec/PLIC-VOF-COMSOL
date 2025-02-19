@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h> 
 
 typedef struct {
     float x;
@@ -20,7 +21,30 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
 
         float M = 3*powf(mx,2.)*mz*(nuo+0.5);
         float phio = asin(1. - 2.*C/phi_crit);
-        float alpha = 0.        ;
+        float alpha = 0.;
+        printf("nuo = ");
+        printf("%f", nuo);
+        printf("\n");
+        printf("mx = ");
+        printf("%f", mx);
+        printf("\n");
+        printf("mz = ");
+        printf("%f", mz);
+        printf("\n");
+        printf("phi_tr = ");
+        printf("%f", phi_tr);
+        printf("\n");
+        printf("phi_crit = ");
+        printf("%f", phi_crit);
+        printf("\n");
+        printf("M = ");
+        printf("%f", M);
+        printf("\n");
+        printf("phio = ");
+        printf("%f", phio);
+        printf("\n");
+        
+
         // float phimax 
 
         // #################################### CONDITIONNER ALPHA ##################################
@@ -60,6 +84,9 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
                 }
             }
         }
+        printf("alpha = ");
+        printf("%f", alpha);
+        printf("\n");
 
          // #################################### calcul de la surface d'interface ##################################
         tuple candidates[4] = {
