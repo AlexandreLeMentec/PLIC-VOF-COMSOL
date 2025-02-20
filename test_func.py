@@ -9,18 +9,18 @@ try:
 except sub.CalledProcessError as e:
     print(f"Compilation failed: {e}")
 
-
 C = 0.5
-nx = np.sqrt(2)/2
-nz = nx
+nx = np.cos(3*np.pi/4)
+nz = np.sin(3*np.pi/4)
 dx = 1.0
 dz = 1.0
-x = 4.0
+x = 25.0
 z = 0.0
 
 func = CDLL(filepath)
 print('############ Valeur calculée ################')
 func.plic_cyl.argtypes = [c_float, c_float, c_float, c_float, c_float, c_float, c_float]
+func.plic_cyl.restype = c_float
 print("Si = ", func.plic_cyl(C,nx,nz,dx,dz,x,z))
 print('')
 print('##############################################')
