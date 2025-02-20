@@ -55,7 +55,7 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
             {
             float alpha_a = (-1 + 2*cos(phio/3 + acos(-1.0)/6.0 )) ;
             float alpha_b = (-1 + 2*sin(phio/3)) ;
-            alpha = powf(M*phi_crit*0.5,1.0/3.0) * (nx_cond*alpha_a + (1. - nx_cond)*alpha_b)  ;   
+            alpha = copysign(1.0,nx)*powf(M*phi_crit*0.5,1.0/3.0) * (nx_cond*alpha_a + (1. - nx_cond)*alpha_b)  ;   
             printf("eq 1,6,4,9");
             printf("\n");
             }
@@ -128,15 +128,17 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
         // results[0] => {sigx1, sigz1}, results[0].x = sigx1
         
         tuple results_coord[2];
-        for (int i = 0; i < 2; i++) {
-            results_coord[i].x = dx * results[i].z + x     ;
-            results_coord[i].z = dz * (1- results[i].x)+z*dz  ;
-        }  
-        float Si = sqrt((results_coord[1].x - results_coord[0].x)*(results_coord[1].x - results_coord[0].x) + (results_coord[1].z - results_coord[0].z)*(results_coord[1].z - results_coord[0].z));
-        printf("Si = ");
-        printf("%f", Si);
-        printf("\n");
+        if (count == 2){
+            for (int i = 0; i < 2; i++) {
+                results_coord[i].x = dx * results[i].z + x     ;
+                results_coord[i].z = dz * (1- results[i].x)+z*dz  ;
+            }  
+            float Si = sqrt((results_coord[1].x - results_coord[0].x)*(results_coord[1].x - results_coord[0].x) + (results_coord[1].z - results_coord[0].z)*(results_coord[1].z - results_coord[0].z));
         return Si;
+        }
+        else {
+            return 0.0;
+        }
     }
 
 

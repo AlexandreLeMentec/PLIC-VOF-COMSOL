@@ -10,8 +10,8 @@ except sub.CalledProcessError as e:
     print(f"Compilation failed: {e}")
 
 C = 0.5
-nx = np.cos(3*np.pi/4)
-nz = np.sin(3*np.pi/4)
+nx = np.cos(7.2*np.pi/4)
+nz = np.sin(7.2*np.pi/4)
 dx = 1.0
 dz = 1.0
 x = 25.0
