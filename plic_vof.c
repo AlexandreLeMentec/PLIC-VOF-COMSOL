@@ -72,7 +72,7 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
             if((mz-mx)>=0.)
             {
                 // equation 3 et 5
-                alpha = mz * C + mx/2. * (nuo + 1/3 + nx_cond*1.0/3.0)/(nuo+1/2) ; // Ajout d'une condition sur le 1/3 -> 2/3
+                alpha = mz * C + mx/2.0 * (nuo + 1/3 + nx_cond*1.0/3.0)/(nuo+0.5) ; // Ajout d'une condition sur le 1/3 -> 2/3
                 printf("eq 3,5");
                  printf("\n");
             }
@@ -81,14 +81,14 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
                 if(nx<0.)
                 {
                     // equation 10
-                    alpha = 1/2 * (mz - 2*mx*(nuo+1) - sqrt(4*powf(mx,2.0)*powf(nuo+1,2.0)- 8 * powf(mx,2.0)*(nuo+1/2)*C - 1/3*powf(mz,2.0)));
+                    alpha = 1/2 * (mz - 2*mx*(nuo+1) - sqrt(4*powf(mx,2.0)*powf(nuo+1,2.0)- 8 * powf(mx,2.0)*(nuo+0.5)*C - 1.0/3.0*powf(mz,2.0)));
                     printf("eq 10");
                     printf("\n");
                 }
                 else
                 {
                     // equation 8 
-                    alpha = 1/2 * (mz - 2*mx*nuo + sqrt(4*powf(mx,2.0)*powf(nuo,2.0) + 8 * powf(mx,2.0)*(nuo+1/2)*C - 1/3*powf(mz,2.0)));
+                    alpha = 0.5 * (mz - 2*mx*nuo + sqrt(4*powf(mx,2.0)*powf(nuo,2.0) + 8 * powf(mx,2.0)*(nuo+0.5)*C - 1.0/3.0*powf(mz,2.0)));
                     printf("eq 8");
                     printf("\n");}
             }
@@ -119,9 +119,9 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
             printf("xi ");
             printf("%i",i);
             printf(" (x y) = ");
-            printf("%f",results[i].x);
+            printf("%f",results[count-mask].x);
             printf(" ");
-            printf("%f",results[i].z);
+            printf("%f",results[count-mask].z);
             printf("\n");
             if (count == 2) break;
         }
@@ -130,8 +130,8 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
         tuple results_coord[2];
         if (count == 2){
             for (int i = 0; i < 2; i++) {
-                results_coord[i].x = dx * results[i].z + x     ;
-                results_coord[i].z = dz * (1- results[i].x)+z*dz  ;
+                results_coord[i].x = dx * results[i].x + x     ;
+                results_coord[i].z = dz * (1- results[i].z)+z*dz  ;
             }  
             float Si = sqrt((results_coord[1].x - results_coord[0].x)*(results_coord[1].x - results_coord[0].x) + (results_coord[1].z - results_coord[0].z)*(results_coord[1].z - results_coord[0].z));
         return Si;

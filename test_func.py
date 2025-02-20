@@ -9,9 +9,9 @@ try:
 except sub.CalledProcessError as e:
     print(f"Compilation failed: {e}")
 
-C = 0.5
-nx = np.cos(7.2*np.pi/4)
-nz = np.sin(7.2*np.pi/4)
+C = 0.95
+nx = np.cos(7.6*np.pi/4.0)
+nz = np.sin(7.6*np.pi/4.0)
 dx = 1.0
 dz = 1.0
 x = 25.0
