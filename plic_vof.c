@@ -15,8 +15,8 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
         //
         float nx_cond = 0.5 + copysign(0.5,nx);                      // condition nx > = 0   
         float mxz_cond = 0.5 + copysign(0.5,(mz-mx));                // condition mx < = mz
-        float phi_tr = mxz_cond*nx_cond*(mx/(2.*mz)*(nuo+1./3.)/(nuo+1./2.)) + (1.-mxz_cond)*nx_cond*(mz/(2.*mx)*(nuo+mz/(3.*mx))/(nuo+1./2.)) + (1.-nx_cond)*mxz_cond*(mx/(2.*mz)*(nuo+2./3.)/(nuo+1./2)) + (1-nx_cond)*(1-mxz_cond)*(mz/(2*mx)*(nuo+1.-mz/(3*mx))/(nuo+1/2));
-        float phi_crit = nx_cond*(2.*mx/(3.*mz)*(powf(nuo,3.))/(nuo+1./2.)) + (1.-nx_cond)*(2.*mx/(3.*mz)*(powf((nuo+1.),3.))/(nuo+1./2.)) ;
+        float phi_tr = mxz_cond*nx_cond*(mx/(2.0*mz)*(nuo+1.0/3.0)/(nuo+0.5)) + (1.0-mxz_cond)*nx_cond*(mz/(2.0*mx)*(nuo+mz/(3.0*mx))/(nuo+0.5)) + (1.0-nx_cond)*mxz_cond*(mx/(2.0*mz)*(nuo+2./3.)/(nuo+1./2)) + (1.0-nx_cond)*(1.0-mxz_cond)*(mz/(2.0*mx)*(nuo+1.0-mz/(3.0*mx))/(nuo+0.5));
+        float phi_crit = nx_cond*(2.0*mx/(3.0*mz)*(powf(nuo,3.0))/(nuo+0.5)) + (1.0-nx_cond)*(2.0*mx/(3.*mz)*(powf((nuo+1.0),3.0))/(nuo+0.5)) ;
         //
 
         float M = 3*powf(mx,2.)*mz*(nuo+0.5);
@@ -48,56 +48,60 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
         // float phimax 
 
         // #################################### CONDITIONNER ALPHA ##################################
-        
-        if (C < phi_tr)             
-        {
-            if (C < phi_crit || nx < 0.)                    // equation (1 et 6) et (4 et 9)
+        if (nx*nz != 0.0){
+            if (C < phi_tr)             
             {
-            float alpha_a = (-1 + 2*cos(phio/3 + acos(-1.0)/6.0 )) ;
-            float alpha_b = (-1 + 2*sin(phio/3)) ;
-            alpha = copysign(1.0,nx)*powf(M*phi_crit*0.5,1.0/3.0) * (nx_cond*alpha_a + (1. - nx_cond)*alpha_b)  ;   
-            printf("eq 1,6,4,9");
-            printf("\n");
-            }
-            else                 // equation 2 et 7
-            {
-            float alpha_c = powf(2.*C - phi_crit + 2.*sqrt(C*(C - phi_crit)),1.0/3.0) + powf(2.*C - phi_crit - 2*sqrt(C*C - phi_crit),1.0/3.0);
-            alpha = ( alpha_c + copysign(1.0,(mz-mx))*powf(phi_crit,1.0/3.0))*powf(M/2.0,1.0/3.0) ;
-            printf("eq 2,7");
-            printf("\n");
-            }
-        }
-        else
-        {
-            if((mz-mx)>=0.)
-            {
-                // equation 3 et 5
-                alpha = mz * C + mx/2.0 * (nuo + 1/3 + nx_cond*1.0/3.0)/(nuo+0.5) ; // Ajout d'une condition sur le 1/3 -> 2/3
-                printf("eq 3,5");
-                 printf("\n");
+                if (C < phi_crit || nx < 0.)                    // equation (1 et 6) et (4 et 9)
+                {
+                float alpha_a = (-1 + 2*cos(phio/3 + acos(-1.0)/6.0 )) ;
+                float alpha_b = (-1 + 2*sin(phio/3)) ;
+                alpha = copysign(1.0,nx)*powf(M*phi_crit*0.5,1.0/3.0) * (nx_cond*alpha_a + (1. - nx_cond)*alpha_b)  ;   
+                printf("eq 1,6,4,9");
+                printf("\n");
+                }
+                else                 // equation 2 et 7
+                {
+                float alpha_c = powf(2.*C - phi_crit + 2.*sqrt(C*(C - phi_crit)),1.0/3.0) + powf(2.*C - phi_crit - 2*sqrt(C*C - phi_crit),1.0/3.0);
+                alpha = ( alpha_c + copysign(1.0,(mz-mx))*powf(phi_crit,1.0/3.0))*powf(M/2.0,1.0/3.0) ;
+                printf("eq 2,7");
+                printf("\n");
+                }
             }
             else
             {
-                if(nx<0.)
+                if((mz-mx)>=0.)
                 {
-                    // equation 10
-                    alpha = 1/2 * (mz - 2*mx*(nuo+1) - sqrt(4*powf(mx,2.0)*powf(nuo+1,2.0)- 8 * powf(mx,2.0)*(nuo+0.5)*C - 1.0/3.0*powf(mz,2.0)));
-                    printf("eq 10");
+                    // equation 3 et 5
+                    alpha = mz * C + mx/2.0 * (nuo + 1.0/3.0 + nx_cond*1.0/3.0)/(nuo+0.5) ; // Ajout d'une condition sur le 1/3 -> 2/3
+                    printf("eq 3,5");
                     printf("\n");
                 }
                 else
                 {
-                    // equation 8 
-                    alpha = 0.5 * (mz - 2*mx*nuo + sqrt(4*powf(mx,2.0)*powf(nuo,2.0) + 8 * powf(mx,2.0)*(nuo+0.5)*C - 1.0/3.0*powf(mz,2.0)));
-                    printf("eq 8");
-                    printf("\n");}
+                    if(nx<0.)
+                    {
+                        // equation 10
+                        alpha = 0.5 * (mz + 2.*mx*(nuo+1) - powf(4.*powf(mx,2.0)*powf(nuo+1.,2.0)- 8. * powf(mx,2.0)*(nuo+0.5)*C - 1.0/3.0*powf(mz,2.0),0.5));
+                        printf("eq 10");
+                        printf("\n");
+                    }
+                    else
+                    {
+                        // equation 8 
+                        alpha = 0.5 * (mz - 2.*mx*nuo + powf(4.*powf(mx,2.0)*powf(nuo,2.0) + 8. * powf(mx,2.0)*(nuo+0.5)*C - 1.0/3.0*powf(mz,2.0),0.5));
+                        printf("eq 8");
+                        printf("\n");}
+                }
             }
+        }
+        else {
+            alpha = C;
         }
         printf("alpha = ");
         printf("%f", alpha);
         printf("\n");
 
-         // #################################### calcul de la surface d'interface ##################################
+        // #################################### calcul de la surface d'interface ##################################
         tuple candidates[4] = {
             {(alpha - mz) / mx, 1.0},  // sigz1
             {1.0, (alpha - mx) / mz},  // sigx1
@@ -128,7 +132,7 @@ float plic_cyl(float C, float nx, float nz, float dx, float dz, float x, float z
         // results[0] => {sigx1, sigz1}, results[0].x = sigx1
         
         tuple results_coord[2];
-        if (count == 2){
+        if (count == 2 && C < 0.9 && C > 0.1){
             for (int i = 0; i < 2; i++) {
                 results_coord[i].x = dx * results[i].x + x     ;
                 results_coord[i].z = dz * (1- results[i].z)+z*dz  ;
