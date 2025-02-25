@@ -131,7 +131,7 @@ EXPORT int eval(const char *func, int nArgs, const double **inReal,
             // results[0] => {sigx1, sigz1}, results[0].x = sigx1
             
             tuple results_coord[2];
-            if (count == 2 && C < 0.99 && C > 0.01){
+            if (count == 2 && C < 0.9 && C > 0.1){
                 for (int j = 0; j < 2; j++) {
                     results_coord[j].x = dx * results[j].x + x     ;
                     results_coord[j].z = dz * (1.0- results[j].z)+z*dz  ;
