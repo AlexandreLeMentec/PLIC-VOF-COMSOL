@@ -56,6 +56,7 @@ def parse_comsol_mesh(file_path, decimal_precision=8):
 # Example usage
 file_path = './mesh_translation/mesh_rec.txt'  # Replace with the actual path
 dr, dz = parse_comsol_mesh(file_path)
+print(len(dr))
 def format_list(lst, line_length=20):
     return ',\n'.join([','.join(map(str, lst[i:i+line_length])) for i in range(0, len(lst), line_length)])
 
