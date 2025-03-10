@@ -635,8 +635,8 @@ EXPORT int eval(const char *func,
       return 0;
     }
     for (i = 0; i < blockSize; i++) {
-      //double buff = dr_get(i);
-      outReal[i] = i*1.0;
+      double buff = dr_get(floor(inReal[i][0])-1);
+      outReal[i] = buff;
     }
     return 1;
   }
@@ -646,8 +646,8 @@ EXPORT int eval(const char *func,
       return 0;
     }
     for (i = 0; i < blockSize; i++) {
-      //double buff = dz_get(i);
-      outReal[i] = i*1.0;
+      double buff = dz_get(floor(inReal[i][0])-1);
+      outReal[i] = buff;
     }
     return 1;
   }

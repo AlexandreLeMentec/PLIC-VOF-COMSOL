@@ -45,9 +45,6 @@ EXPORT int eval(const char *func, int nArgs, const double **inReal,
             double x = inReal[5][i];
             double z = inReal[6][i];
 
-            float nuo = x/ dx;
-            float mx = fabs(nx)*dx/(fabs(nz)*dz + fabs(nx)*dx);
-            float mz = fabs(nz)*dz/(fabs(nz)*dz + fabs(nx)*dx);
 
             
             float alpha = 0.0;
@@ -55,7 +52,10 @@ EXPORT int eval(const char *func, int nArgs, const double **inReal,
             // float phimax 
 
             // #################################### CONDITIONNER ALPHA ##################################
-            if (nx*nz != 0.0){
+            if (isnan(C) == 0 && isinf(C) == 0){
+                float nuo = x/ dx;
+                float mx = fabs(nx)*dx/(fabs(nz)*dz + fabs(nx)*dx);
+                float mz = fabs(nz)*dz/(fabs(nz)*dz + fabs(nx)*dx);
                 //
                 float nx_cond = 0.5 + copysign(0.5,nx);                      // condition nx > = 0   
                 float mxz_cond = 0.5 + copysign(0.5,(mz-mx));                // condition mx < = mz
@@ -101,47 +101,40 @@ EXPORT int eval(const char *func, int nArgs, const double **inReal,
                         }
                     }
                 }
-            }
-            else {
-                alpha = C;
-                if (C < 0.99 && C > 0.01){
-                    outReal[i] = dx*nx+dz*nz;
+                // #################################### calcul de la surface d'interface ##################################
+                tuple candidates[4] = {
+                    {(alpha - mz) / mx, 1.0},  // sigz1
+                    {1.0, (alpha - mx) / mz},  // sigx1
+                    {alpha / mx, 0.0},         // sigz0
+                    {0.0, alpha / mz}          // sigx0
+                    };
+                tuple results[2];
+                int count = 0;
+                for (int j = 0; j < 4; j++) {
+                    int mask = (candidates[j].x >= 0.0f && candidates[j].x <= 1.0f) &
+                            (candidates[j].z >= 0.0f && candidates[j].z <= 1.0f);
+                    results[count] = candidates[j];  
+                    count += mask;
+                    if (count == 2) break;
                 }
-                else{
-                    outReal[i] = 0.0;     
+                // results[0] => {sigx1, sigz1}, results[0].x = sigx1
+                
+                tuple results_coord[2];
+                if (count == 2 && C < 0.8 && C > 0.2){
+                    for (int j = 0; j < 2; j++) {
+                        results_coord[j].x = dx * results[j].x + x     ;
+                        results_coord[j].z = dz * (1.0- results[j].z)+z*dz  ;
+                    }  
+                    double Si = sqrt((results_coord[1].x - results_coord[0].x)*(results_coord[1].x - results_coord[0].x) + (results_coord[1].z - results_coord[0].z)*(results_coord[1].z - results_coord[0].z));
+                    outReal[i] = Si;
                 }
-             return 1;   
-            }  
-            // #################################### calcul de la surface d'interface ##################################
-            tuple candidates[4] = {
-                {(alpha - mz) / mx, 1.0},  // sigz1
-                {1.0, (alpha - mx) / mz},  // sigx1
-                {alpha / mx, 0.0},         // sigz0
-                {0.0, alpha / mz}          // sigx0
-                };
-            tuple results[2];
-            int count = 0;
-            for (int j = 0; j < 4; j++) {
-                int mask = (candidates[j].x >= 0.0f && candidates[j].x <= 1.0f) &
-                        (candidates[j].z >= 0.0f && candidates[j].z <= 1.0f);
-                results[count] = candidates[j];  
-                count += mask;
-                if (count == 2) break;
-            }
-            // results[0] => {sigx1, sigz1}, results[0].x = sigx1
-            
-            tuple results_coord[2];
-            if (count == 2 && C < 0.9 && C > 0.1){
-                for (int j = 0; j < 2; j++) {
-                    results_coord[j].x = dx * results[j].x + x     ;
-                    results_coord[j].z = dz * (1.0- results[j].z)+z*dz  ;
-                }  
-                float Si = sqrt((results_coord[1].x - results_coord[0].x)*(results_coord[1].x - results_coord[0].x) + (results_coord[1].z - results_coord[0].z)*(results_coord[1].z - results_coord[0].z));
-                outReal[i] = Si;
+                else {
+                    outReal[i] = 0.0;
+                }
             }
             else {
                 outReal[i] = 0.0;
-            }
+            } 
         }
         return 1;
     }
